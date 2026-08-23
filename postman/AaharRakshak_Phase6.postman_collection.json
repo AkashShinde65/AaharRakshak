@@ -1,0 +1,228 @@
+{
+  "info": {
+    "name": "AaharRakshak Phase 6 - Transparency and Administrative Action",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Phase 6 workflow: published lab outcome, show-cause notice, company response, senior official decision, public report, recall and alert lookup."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "districtToken",
+      "value": ""
+    },
+    {
+      "key": "companyToken",
+      "value": ""
+    },
+    {
+      "key": "labToken",
+      "value": ""
+    },
+    {
+      "key": "reportId",
+      "value": "1"
+    },
+    {
+      "key": "noticeNumber",
+      "value": "SCN-CHANGE-ME"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth - Login District Officer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"district@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Login Company",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"company@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Official - Administrative Action Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/admin-actions/dashboard"
+      }
+    },
+    {
+      "name": "Official - Issue Show-Cause Notice",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/admin-actions/reports/{{reportId}}/show-cause-notices",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"subject\": \"Show-cause notice for published laboratory report\",\n  \"reason\": \"Published mock lab outcome requires company explanation before simulated action.\",\n  \"evidenceSummary\": \"Reviewed lab report and complaint record. Citizen private details are redacted.\",\n  \"responseDueAt\": \"2026-08-15T18:00:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Company - List Notices",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{companyToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/company/admin-actions/notices"
+      }
+    },
+    {
+      "name": "Company - Submit Response",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{companyToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/company/admin-actions/notices/{{noticeNumber}}/responses",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"responseText\": \"We reviewed the mock lab outcome and submit corrective records for official review.\",\n  \"document\": {\n    \"objectKey\": \"company-responses/{{noticeNumber}}/response.pdf\",\n    \"originalFileName\": \"response.pdf\",\n    \"contentType\": \"application/pdf\",\n    \"sizeBytes\": 4096,\n    \"checksumSha256\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Official - Review Company Response",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/admin-actions/notices/{{noticeNumber}}/review",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"notes\": \"Company response reviewed for simulated administrative decision.\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Official - Record Simulated Decision",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/admin-actions/notices/{{noticeNumber}}/decision",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"actionType\": \"BATCH_RECALL\",\n  \"reason\": \"Company response did not resolve the published adulterated mock lab outcome.\",\n  \"evidenceSummary\": \"Decision is based on reviewed report and company response document metadata.\",\n  \"effectiveDate\": \"2026-08-20\",\n  \"publicSummary\": \"Simulated recall notice for the affected demo batch. This is not a real government action.\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Public - Track Complaint Status",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/transparency/complaints/ARK-SEED-0006/status"
+      }
+    },
+    {
+      "name": "Public - Anonymized Lab Report",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/transparency/reports/LAB-SEED-0006"
+      }
+    },
+    {
+      "name": "Public - Search Product",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/transparency/search?product=turmeric"
+      }
+    },
+    {
+      "name": "Public - Licence Status",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/transparency/licences/12345678901234/status"
+      }
+    },
+    {
+      "name": "Public - Batch Status",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/transparency/batches/TUR-2026-001/status"
+      }
+    },
+    {
+      "name": "Public - Recalls",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/transparency/recalls"
+      }
+    },
+    {
+      "name": "Public - Alerts",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/transparency/alerts"
+      }
+    }
+  ]
+}

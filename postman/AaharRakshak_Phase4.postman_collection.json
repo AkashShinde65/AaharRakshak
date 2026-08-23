@@ -1,0 +1,396 @@
+{
+  "info": {
+    "name": "AaharRakshak Phase 4 - Citizen Complaint And Food Scanning",
+    "_postman_id": "7f16b85b-9f73-4e4a-91bb-9dc5f94eb4a1",
+    "description": "Phase 4 development requests for citizen scanning, complaint drafts, evidence metadata, submission, privacy-safe citizen reads and assigned-official reads.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "citizenToken",
+      "value": ""
+    },
+    {
+      "key": "inspectorToken",
+      "value": ""
+    },
+    {
+      "key": "complaintId",
+      "value": ""
+    },
+    {
+      "key": "ticketNumber",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Login - Citizen",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"citizen login succeeds\", function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set(\"citizenToken\", body.accessToken);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"citizen@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Login - Food Inspector",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"inspector login succeeds\", function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set(\"inspectorToken\", body.accessToken);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"inspector@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Scan Packaged Food",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{citizenToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"barcode\": \"8901234567890\",\n  \"frontLabelImage\": {\n    \"objectKey\": \"citizen-uploads/scan/front-label.jpg\",\n    \"originalFileName\": \"front-label.jpg\",\n    \"contentType\": \"image/jpeg\",\n    \"sizeBytes\": 143210\n  },\n  \"licenceLabelImage\": {\n    \"objectKey\": \"citizen-uploads/scan/licence-label.jpg\",\n    \"originalFileName\": \"licence-label.jpg\",\n    \"contentType\": \"image/jpeg\",\n    \"sizeBytes\": 121005\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/citizen/scans/packaged-food",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "citizen",
+            "scans",
+            "packaged-food"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Packaged Food Draft",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"draft created\", function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set(\"complaintId\", body.complaintId);",
+              "pm.collectionVariables.set(\"ticketNumber\", body.ticketNumber);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{citizenToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"complaintType\": \"PACKAGED_FOOD\",\n  \"category\": \"SUSPECTED_ADULTERATION\",\n  \"scannedBarcode\": \"8901234567890\",\n  \"productId\": 1,\n  \"detectedProductName\": \"Demo Turmeric Powder\",\n  \"detectedCompanyName\": \"Demo Foods Private Limited\",\n  \"detectedFssaiLicenceNumber\": \"12345678901234\",\n  \"detectedBatchNumber\": \"TUR-2026-001\",\n  \"detectedExpiryDate\": \"2027-01-14\",\n  \"confirmedProductName\": \"Demo Turmeric Powder\",\n  \"confirmedCompanyName\": \"Demo Foods Private Limited\",\n  \"confirmedFssaiLicenceNumber\": \"12345678901234\",\n  \"confirmedBatchNumber\": \"TUR-2026-001\",\n  \"confirmedExpiryDate\": \"2027-01-14\",\n  \"description\": \"Citizen corrected OCR fields and submitted label evidence.\",\n  \"location\": {\n    \"consentAccepted\": true,\n    \"latitude\": 18.52043,\n    \"longitude\": 73.85674,\n    \"address\": \"Pune demo market\"\n  },\n  \"evidence\": [\n    {\n      \"type\": \"PRODUCT_LABEL_PHOTO\",\n      \"objectKey\": \"complaints/demo/product-label.jpg\",\n      \"originalFileName\": \"product-label.jpg\",\n      \"contentType\": \"image/jpeg\",\n      \"sizeBytes\": 143210,\n      \"checksumSha256\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\n      \"capturedAt\": \"2026-01-01T10:00:00Z\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/citizen/complaints/drafts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "citizen",
+            "complaints",
+            "drafts"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Add Receipt Evidence",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{citizenToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"RECEIPT_FILE\",\n  \"objectKey\": \"complaints/demo/receipt.pdf\",\n  \"originalFileName\": \"receipt.pdf\",\n  \"contentType\": \"application/pdf\",\n  \"sizeBytes\": 84220,\n  \"checksumSha256\": \"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\n  \"capturedAt\": \"2026-01-01T10:02:00Z\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/citizen/complaints/{{complaintId}}/evidence",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "citizen",
+            "complaints",
+            "{{complaintId}}",
+            "evidence"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Submit Complaint",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{citizenToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/citizen/complaints/{{complaintId}}/submit",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "citizen",
+            "complaints",
+            "{{complaintId}}",
+            "submit"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List My Complaints",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{citizenToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/citizen/complaints",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "citizen",
+            "complaints"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get My Complaint",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{citizenToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/citizen/complaints/{{ticketNumber}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "citizen",
+            "complaints",
+            "{{ticketNumber}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Assigned Official Complaints",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{inspectorToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/complaints/assigned",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "complaints",
+            "assigned"
+          ]
+        }
+      }
+    },
+    {
+      "name": "View Seed Assigned Complaint",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{inspectorToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/complaints/ARK-SEED-0001",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "complaints",
+            "ARK-SEED-0001"
+          ]
+        }
+      }
+    }
+  ]
+}

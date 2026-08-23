@@ -1,0 +1,48 @@
+@model official_web_dotnet.Models.DecisionViewModel
+@{
+    ViewData["Title"] = "Record Decision";
+    var noticeNumber = ViewData["NoticeNumber"] as string ?? "";
+}
+
+<h1 class="h4 page-title">Record Simulated Decision</h1>
+<div class="surface">
+    <form asp-action="Decision" asp-route-id="@noticeNumber" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="ActionType" class="form-label"></label>
+            <select asp-for="ActionType" class="form-select">
+                <option>WARNING</option>
+                <option>BATCH_RECALL</option>
+                <option>TEMPORARY_SUSPENSION</option>
+                <option>CANCELLATION</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Reason" class="form-label"></label>
+            <textarea asp-for="Reason" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Reason" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="EvidenceSummary" class="form-label"></label>
+            <textarea asp-for="EvidenceSummary" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="EvidenceSummary" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="EffectiveDate" class="form-label"></label>
+            <input asp-for="EffectiveDate" class="form-control" />
+            <span asp-validation-for="EffectiveDate" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="PublicSummary" class="form-label"></label>
+            <textarea asp-for="PublicSummary" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="PublicSummary" class="text-danger"></span>
+        </div>
+        <button class="btn btn-primary" type="submit">Record Decision</button>
+        <a class="btn btn-link" asp-action="Notice" asp-route-id="@noticeNumber">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

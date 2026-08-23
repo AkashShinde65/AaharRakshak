@@ -1,0 +1,33 @@
+@model IReadOnlyList<official_web_dotnet.Models.ShowCauseNoticeViewModel>
+@{
+    ViewData["Title"] = "Administrative Notices";
+}
+
+<h1 class="h4 page-title">Administrative Notices</h1>
+<div class="surface table-responsive">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Notice</th>
+                <th>Complaint</th>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Due</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var notice in Model)
+        {
+            <tr>
+                <td>@notice.NoticeNumber</td>
+                <td>@notice.TicketNumber</td>
+                <td>@notice.CompanyName</td>
+                <td><span class="status-pill">@notice.Status</span></td>
+                <td>@notice.ResponseDueAt.ToLocalTime().ToString("g")</td>
+                <td class="text-end"><a class="btn btn-sm btn-outline-secondary" asp-action="Notice" asp-route-id="@notice.NoticeNumber">Open</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

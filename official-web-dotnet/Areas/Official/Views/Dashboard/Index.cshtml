@@ -1,0 +1,52 @@
+@model IReadOnlyList<official_web_dotnet.Models.OfficialDashboardItemViewModel>
+@{
+    ViewData["Title"] = "Official Dashboard";
+}
+
+<h1 class="h4 page-title">Official Action Dashboard</h1>
+<div class="surface table-responsive">
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>Report</th>
+                <th>Complaint</th>
+                <th>Outcome</th>
+                <th>Company</th>
+                <th>Product / Batch</th>
+                <th>Notice</th>
+                <th>Action</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ReportNumber</td>
+                <td>@item.TicketNumber<br /><span class="text-muted small">@item.ComplaintStatus</span></td>
+                <td><span class="status-pill">@item.Outcome</span></td>
+                <td>@item.CompanyName</td>
+                <td>@item.ProductName<br /><span class="text-muted small">@item.BatchNumber</span></td>
+                <td>
+                    @if (string.IsNullOrWhiteSpace(item.NoticeNumber))
+                    {
+                        <span class="text-muted">Not issued</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Notice" asp-route-id="@item.NoticeNumber">@item.NoticeNumber</a>
+                        <span class="status-pill ms-1">@item.NoticeStatus</span>
+                    }
+                </td>
+                <td>@(item.ActionType ?? "Pending")</td>
+                <td class="text-end">
+                    @if (string.IsNullOrWhiteSpace(item.NoticeNumber) && (User.IsInRole("DISTRICT_ESCALATION_OFFICER") || User.IsInRole("CENTRAL_ADMINISTRATOR")))
+                    {
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Issue" asp-route-reportId="@item.ReportId">Issue Notice</a>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,70 @@
+@model official_web_dotnet.Models.TrustScoreLookupViewModel
+@{
+    ViewData["Title"] = "Trust Score";
+}
+
+<h1 class="h4 page-title">Public Trust Score</h1>
+@if (ViewData["PortalError"] is string error)
+{
+    <div class="alert alert-warning">@error</div>
+}
+<div class="surface mb-3">
+    <form asp-action="Trust" method="get" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label asp-for="CompanyId" class="form-label"></label>
+            <input asp-for="CompanyId" class="form-control" />
+            <span asp-validation-for="CompanyId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100" type="submit">View</button>
+        </div>
+    </form>
+</div>
+
+@if (Model.TrustScore is not null)
+{
+    <div class="surface mb-3">
+        <div class="metric-grid">
+            <div>
+                <span class="text-muted small">Company</span>
+                <strong>@Model.TrustScore.CompanyName</strong>
+            </div>
+            <div>
+                <span class="text-muted small">Trust Score</span>
+                <strong>@Model.TrustScore.Score.ToString("0.0")</strong>
+            </div>
+            <div>
+                <span class="text-muted small">Risk</span>
+                <strong>@Model.TrustScore.RiskLevel</strong>
+            </div>
+            <div>
+                <span class="text-muted small">Verified Reviews</span>
+                <strong>@Model.TrustScore.ReviewCount</strong>
+            </div>
+        </div>
+    </div>
+    <div class="surface table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>Inspection</th>
+                    <th>Laboratory</th>
+                    <th>Recall</th>
+                    <th>Review</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.TrustScore.InspectionPoints.ToString("0.0")</td>
+                    <td>@Model.TrustScore.LabPoints.ToString("0.0")</td>
+                    <td>@Model.TrustScore.RecallPoints.ToString("0.0")</td>
+                    <td>@Model.TrustScore.ReviewPoints.ToString("0.0")</td>
+                    <td>@Model.TrustScore.RecalculatedAt.ToLocalTime().ToString("g")</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>@Model.TrustScore.Explanation</p>
+        <p class="text-muted small mb-0">@Model.TrustScore.RawComplaintFairnessNote</p>
+    </div>
+}

@@ -1,0 +1,128 @@
+@model official_web_dotnet.Models.OfficialHotspotPageViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Hotspots";
+    var mapPoints = Model.Hotspots.Select(item => new
+    {
+        item.HotspotId,
+        item.ProductOrVendor,
+        item.RiskLevel,
+        item.ComplaintCount,
+        item.RadiusKm,
+        item.CenterLatitude,
+        item.CenterLongitude,
+        item.WindowStart,
+        item.WindowEnd
+    });
+    var mapJson = JsonSerializer.Serialize(mapPoints, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+}
+
+<h1 class="h4 page-title">District Hotspot Dashboard</h1>
+<div class="surface mb-3">
+    <form asp-action="Hotspots" method="get" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label asp-for="District" class="form-label"></label>
+            <input asp-for="District" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100" type="submit">Load</button>
+        </div>
+    </form>
+    <form asp-action="DetectHotspots" method="post" class="mt-2">
+        @Html.AntiForgeryToken()
+        <input asp-for="District" type="hidden" />
+        <button class="btn btn-outline-primary" type="submit">Run Detection</button>
+    </form>
+    <span asp-validation-for="District" class="text-danger small"></span>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="text-danger small mt-2">@Html.ValidationSummary()</div>
+    }
+</div>
+
+<div class="surface mb-3">
+    <div id="hotspotMap" class="hotspot-map" role="img" aria-label="District hotspot map"></div>
+</div>
+
+<div class="surface table-responsive">
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>Risk</th>
+                <th>Product / Vendor</th>
+                <th>Complaints</th>
+                <th>Radius</th>
+                <th>Window</th>
+                <th>Cluster Complaints</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Hotspots)
+        {
+            <tr>
+                <td><span class="status-pill risk-@item.RiskLevel">@item.RiskLevel</span></td>
+                <td>@item.ProductOrVendor<br /><span class="text-muted small">@item.RelatedKey</span></td>
+                <td>@item.ComplaintCount</td>
+                <td>@item.RadiusKm.ToString("0.##") km</td>
+                <td>@item.WindowStart.ToLocalTime().ToString("g") - @item.WindowEnd.ToLocalTime().ToString("g")</td>
+                <td>@string.Join(", ", item.ComplaintNumbers)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    @if (Model.Hotspots.Count > 0)
+    {
+        <p class="text-muted small mb-0">@Model.Hotspots[0].PrivacyNote</p>
+    }
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const hotspots = @Html.Raw(mapJson);
+        const map = L.map('hotspotMap');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const riskColors = {
+            LOW: '#26834a',
+            MEDIUM: '#9a6a00',
+            HIGH: '#b54708',
+            CRITICAL: '#b42318'
+        };
+        const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (match) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        })[match]);
+
+        if (hotspots.length === 0) {
+            map.setView([18.5204, 73.8567], 11);
+        } else {
+            const bounds = [];
+            hotspots.forEach((item) => {
+                const lat = Number(item.centerLatitude);
+                const lng = Number(item.centerLongitude);
+                bounds.push([lat, lng]);
+                const color = riskColors[item.riskLevel] || '#4b5563';
+                L.circle([lat, lng], {
+                    radius: Number(item.radiusKm) * 1000,
+                    color,
+                    fillColor: color,
+                    fillOpacity: 0.18,
+                    weight: 2
+                }).addTo(map).bindPopup(
+                    `<strong>${escapeHtml(item.productOrVendor)}</strong><br>` +
+                    `${escapeHtml(item.riskLevel)} risk<br>` +
+                    `${item.complaintCount} complaints within ${item.radiusKm} km`
+                );
+            });
+            map.fitBounds(bounds, { padding: [30, 30], maxZoom: 13 });
+        }
+    </script>
+}

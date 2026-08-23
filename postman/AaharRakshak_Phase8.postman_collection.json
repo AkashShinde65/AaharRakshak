@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "AaharRakshak Phase 8",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "citizenToken", "value": "" },
+    { "key": "districtToken", "value": "" },
+    { "key": "companyToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Login Citizen",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": { "mode": "raw", "raw": "{\"identifier\":\"citizen@aaharrakshak.dev\",\"password\":\"password\"}" }
+      }
+    },
+    {
+      "name": "Android Packaged Food Draft",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{citizenToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/citizen/complaints/drafts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"complaintType\":\"PACKAGED_FOOD\",\n  \"category\":\"SUSPECTED_ADULTERATION\",\n  \"scannedBarcode\":\"8901234567890\",\n  \"confirmedProductName\":\"Demo Turmeric Powder\",\n  \"confirmedCompanyName\":\"Demo Foods Private Limited\",\n  \"confirmedFssaiLicenceNumber\":\"12345678901234\",\n  \"confirmedBatchNumber\":\"TUR-2026-001\",\n  \"confirmedExpiryDate\":\"2027-01-14\",\n  \"description\":\"Citizen-confirmed Android complaint draft.\",\n  \"location\":{\"consentAccepted\":true,\"latitude\":18.52043,\"longitude\":73.85674,\"address\":\"Pune demo market\"},\n  \"evidence\":[{\"type\":\"PRODUCT_LABEL_PHOTO\",\"objectKey\":\"complaints/mobile/product-label.jpg\",\"originalFileName\":\"product-label.jpg\",\"contentType\":\"image/jpeg\",\"sizeBytes\":2048,\"checksumSha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"capturedAt\":\"2026-01-01T10:00:00Z\"}]\n}"
+        }
+      }
+    },
+    {
+      "name": "Public Alerts",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/transparency/alerts"
+      }
+    },
+    {
+      "name": "Official Hotspots",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{districtToken}}" }],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/hotspots/district?district=Pune"
+      }
+    },
+    {
+      "name": "Public Trust Score",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/trust/companies/1"
+      }
+    }
+  ]
+}

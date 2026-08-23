@@ -1,0 +1,41 @@
+@model official_web_dotnet.Models.PublicAlertsPageViewModel
+@{
+    ViewData["Title"] = "Recalls and Alerts";
+}
+
+<h1 class="h4 page-title">Recalls and Safety Alerts</h1>
+<div class="surface mb-3 table-responsive">
+    <h2 class="h5">Recall Notices</h2>
+    <table class="table table-sm">
+        <thead><tr><th>Action</th><th>Type</th><th>Effective</th><th>Summary</th></tr></thead>
+        <tbody>
+        @foreach (var recall in Model.Recalls)
+        {
+            <tr>
+                <td>@recall.ActionNumber</td>
+                <td>@recall.ActionType</td>
+                <td>@recall.EffectiveDate</td>
+                <td>@recall.PublicSummary</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<div class="surface table-responsive">
+    <h2 class="h5">Safety Alerts</h2>
+    <table class="table table-sm">
+        <thead><tr><th>Title</th><th>Severity</th><th>Product / Batch</th><th>Location</th><th>Published</th></tr></thead>
+        <tbody>
+        @foreach (var alert in Model.Alerts)
+        {
+            <tr>
+                <td>@alert.Title<br /><span class="text-muted small">@alert.Message</span></td>
+                <td>@alert.Severity</td>
+                <td>@alert.ProductName / @alert.BatchNumber</td>
+                <td>@alert.Location</td>
+                <td>@alert.PublishedAt.ToLocalTime().ToString("g")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

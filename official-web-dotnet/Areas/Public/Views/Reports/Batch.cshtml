@@ -1,0 +1,22 @@
+@model official_web_dotnet.Models.PublicBatchStatusViewModel
+@{
+    ViewData["Title"] = "Batch Status";
+}
+
+<h1 class="h4 page-title">Batch Status</h1>
+<div class="surface mb-3">
+    <form asp-action="Batch" method="get" class="row g-2">
+        <div class="col-md-10"><input name="batchNumber" value="@Model.BatchNumber" class="form-control" /></div>
+        <div class="col-md-2"><button class="btn btn-primary w-100">Lookup</button></div>
+    </form>
+</div>
+<div class="surface">
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Batch</dt><dd class="col-sm-8">@Model.BatchNumber</dd>
+        <dt class="col-sm-4">Product</dt><dd class="col-sm-8">@Model.ProductName</dd>
+        <dt class="col-sm-4">Company</dt><dd class="col-sm-8">@Model.CompanyName</dd>
+        <dt class="col-sm-4">Platform status</dt><dd class="col-sm-8"><span class="status-pill">@Model.PlatformStatus</span></dd>
+        <dt class="col-sm-4">Expiry</dt><dd class="col-sm-8">@Model.ExpiresOn</dd>
+    </dl>
+    <p class="text-muted mt-3 mb-0">@Model.SafetyNote</p>
+</div>

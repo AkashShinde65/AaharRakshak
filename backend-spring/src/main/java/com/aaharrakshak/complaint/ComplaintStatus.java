@@ -1,0 +1,19 @@
+package com.aaharrakshak.complaint;
+
+public enum ComplaintStatus {
+    DRAFT,
+    SUBMITTED,
+    VERIFIED,
+    ASSIGNED,
+    INSPECTION_SCHEDULED,
+    SAMPLE_COLLECTED,
+    LAB_TESTING,
+    REPORT_PUBLISHED,
+    ACTION_TAKEN,
+    CLOSED,
+    REJECTED_DUPLICATE,
+    INSUFFICIENT_EVIDENCE,
+    NO_VIOLATION_FOUND,
+    ESCALATED
+}
+

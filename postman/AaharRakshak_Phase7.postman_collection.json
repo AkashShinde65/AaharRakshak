@@ -1,0 +1,239 @@
+{
+  "info": {
+    "name": "AaharRakshak Phase 7 - Intelligence, Hotspots, Alerts and SLA",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Phase 7 workflow: hotspot detection, explainable risk analysis, SLA escalation, alert outbox, receipt-backed Trust Score and privacy-preserving public lookup."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "districtToken",
+      "value": ""
+    },
+    {
+      "key": "inspectorToken",
+      "value": ""
+    },
+    {
+      "key": "citizenToken",
+      "value": ""
+    },
+    {
+      "key": "companyId",
+      "value": "1"
+    },
+    {
+      "key": "reviewChecksum",
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth - Login District Officer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"district@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Login Inspector",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"inspector@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Login Citizen",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"citizen@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Official - Detect Pune Hotspots",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/hotspots/detect?district=Pune"
+      }
+    },
+    {
+      "name": "Official - Pune Hotspot Dashboard Data",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/hotspots/district?district=Pune"
+      }
+    },
+    {
+      "name": "Official - Explainable Risk Analysis",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/risk/complaints/ARK-HOT-0001"
+      }
+    },
+    {
+      "name": "Inspector - Block Silent High-Risk Close",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{inspectorToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/complaints/ARK-SLA-0007/close",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"Silent close attempt should be blocked for high-risk case\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Official - Run SLA Overdue Check",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/sla/check-overdue"
+      }
+    },
+    {
+      "name": "Official - SLA Escalations",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/sla/escalations"
+      }
+    },
+    {
+      "name": "Official - Alert Outbox",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/alerts/outbox"
+      }
+    },
+    {
+      "name": "Citizen - Submit Receipt-Backed Review",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{citizenToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/citizen/trust/reviews",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"companyId\": {{companyId}},\n  \"productId\": 1,\n  \"batchId\": 1,\n  \"rating\": 4,\n  \"reviewText\": \"Receipt-backed review for the academic Trust Score demo.\",\n  \"receipt\": {\n    \"objectKey\": \"receipts/phase7/{{reviewChecksum}}.jpg\",\n    \"originalFileName\": \"phase7-receipt.jpg\",\n    \"contentType\": \"image/jpeg\",\n    \"sizeBytes\": 2048,\n    \"checksumSha256\": \"{{reviewChecksum}}\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Citizen - My Alerts",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{citizenToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/citizen/alerts"
+      }
+    },
+    {
+      "name": "Public - Trust Score",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/public/trust/companies/{{companyId}}"
+      }
+    },
+    {
+      "name": "Official - Mock External Events",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{districtToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/official/intelligence/mock-external-events"
+      }
+    }
+  ]
+}

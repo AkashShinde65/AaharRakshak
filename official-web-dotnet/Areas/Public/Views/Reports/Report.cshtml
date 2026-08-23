@@ -1,0 +1,43 @@
+@model official_web_dotnet.Models.PublicLabReportViewModel
+@{
+    ViewData["Title"] = "Report " + Model.ReportNumber;
+}
+
+<h1 class="h4 page-title">Anonymized Lab Report @Model.ReportNumber</h1>
+<div class="alert alert-info">@Model.PrivacyNotice</div>
+<div class="surface mb-3">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">Complaint</dt><dd class="col-sm-9">@Model.TicketNumber</dd>
+        <dt class="col-sm-3">Outcome</dt><dd class="col-sm-9"><span class="status-pill">@Model.Outcome</span></dd>
+        <dt class="col-sm-3">Company</dt><dd class="col-sm-9">@Model.CompanyName</dd>
+        <dt class="col-sm-3">Product / Batch</dt><dd class="col-sm-9">@Model.ProductName / @Model.BatchNumber</dd>
+        <dt class="col-sm-3">Summary</dt><dd class="col-sm-9">@Model.ResultSummary</dd>
+    </dl>
+</div>
+<div class="surface mb-3 table-responsive">
+    <h2 class="h5">Parameters</h2>
+    <table class="table table-sm">
+        <thead><tr><th>Parameter</th><th>Limit</th><th>Result</th><th>Compliant</th><th>Remarks</th></tr></thead>
+        <tbody>
+        @foreach (var result in Model.Results)
+        {
+            <tr>
+                <td>@result.ParameterName</td>
+                <td>@result.PermissibleLimit</td>
+                <td>@result.ResultValue @result.Unit</td>
+                <td>@result.Compliant</td>
+                <td>@result.Remarks</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+@if (Model.Action is not null)
+{
+    <div class="surface">
+        <h2 class="h5">Administrative Action</h2>
+        <p><strong>@Model.Action.ActionType</strong> · @Model.Action.ActionNumber</p>
+        <p>@Model.Action.PublicSummary</p>
+        <p class="small text-muted">Simulated action: @Model.Action.Simulated</p>
+    </div>
+}

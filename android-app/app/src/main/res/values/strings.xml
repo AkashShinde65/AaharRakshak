@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AaharRakshak</string>
+    <string name="privacy_notice">Images can suggest visible food-safety concerns but never confirm chemical adulteration without laboratory testing.</string>
+    <string name="gps_consent">Share location only with consent for complaint routing and regional alerts.</string>
+</resources>

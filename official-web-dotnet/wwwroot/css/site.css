@@ -1,0 +1,105 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  background: #f6f8fb;
+}
+
+.page-title {
+  margin-bottom: 1rem;
+}
+
+.surface {
+  background: #fff;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.status-pill {
+  display: inline-block;
+  border: 1px solid #ced6e0;
+  border-radius: 999px;
+  padding: .2rem .55rem;
+  font-size: .82rem;
+  background: #f8fafc;
+}
+
+.risk-LOW {
+  border-color: #9bd3ad;
+  color: #146c2e;
+  background: #effaf2;
+}
+
+.risk-MEDIUM {
+  border-color: #e5c773;
+  color: #7a4d00;
+  background: #fff7db;
+}
+
+.risk-HIGH {
+  border-color: #f0a36d;
+  color: #9a3412;
+  background: #fff3ea;
+}
+
+.risk-CRITICAL {
+  border-color: #f1a7a1;
+  color: #9f1d14;
+  background: #fff1f0;
+}
+
+.hotspot-map {
+  min-height: 420px;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.metric-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.metric-grid > div {
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  padding: .85rem;
+  background: #fbfcfe;
+}
+
+.metric-grid span,
+.metric-grid strong {
+  display: block;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}

@@ -1,0 +1,63 @@
+@model official_web_dotnet.Models.OfficialAlertPageViewModel
+@{
+    ViewData["Title"] = "Alert Operations";
+}
+
+<h1 class="h4 page-title">Alert Operations Dashboard</h1>
+<div class="surface mb-3 table-responsive">
+    <h2 class="h5">Notification Outbox</h2>
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Channel</th>
+                <th>Status</th>
+                <th>Retries</th>
+                <th>Subject</th>
+                <th>User</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Outbox)
+        {
+            <tr>
+                <td>@item.EventType</td>
+                <td>@item.Channel</td>
+                <td><span class="status-pill">@item.Status</span></td>
+                <td>@item.RetryCount</td>
+                <td>@item.Subject<br /><span class="text-muted small">@item.Body</span></td>
+                <td>@item.UserId</td>
+                <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<div class="surface table-responsive">
+    <h2 class="h5">Mock External Events</h2>
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Target</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Safety Note</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.MockExternalEvents)
+        {
+            <tr>
+                <td>@item.EventType</td>
+                <td>@item.TargetType / @item.TargetId</td>
+                <td><span class="status-pill">@item.Status</span></td>
+                <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+                <td>@item.SafetyNote</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

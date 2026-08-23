@@ -1,0 +1,51 @@
+@model IReadOnlyList<official_web_dotnet.Models.SlaEscalationViewModel>
+@{
+    ViewData["Title"] = "SLA Escalations";
+}
+
+<h1 class="h4 page-title">SLA Escalation Dashboard</h1>
+@if (TempData["PortalError"] is string error)
+{
+    <div class="alert alert-warning">@error</div>
+}
+@if (User.IsInRole("DISTRICT_ESCALATION_OFFICER") || User.IsInRole("CENTRAL_ADMINISTRATOR"))
+{
+    <div class="surface mb-3">
+        <form asp-action="CheckOverdue" method="post">
+            @Html.AntiForgeryToken()
+            <button class="btn btn-outline-primary" type="submit">Check Overdue Cases</button>
+        </form>
+    </div>
+}
+
+<div class="surface table-responsive">
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>Complaint</th>
+                <th>District</th>
+                <th>Risk</th>
+                <th>Previous Status</th>
+                <th>Inspector</th>
+                <th>Escalated To</th>
+                <th>Reason</th>
+                <th>Escalated</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TicketNumber</td>
+                <td>@item.District</td>
+                <td><span class="status-pill risk-HIGH">@item.RiskScore</span></td>
+                <td>@item.PreviousStatus</td>
+                <td>@(item.AssignedInspectorName ?? "Unassigned")</td>
+                <td>@item.EscalatedToName</td>
+                <td>@item.Reason</td>
+                <td>@item.EscalatedAt.ToLocalTime().ToString("g")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

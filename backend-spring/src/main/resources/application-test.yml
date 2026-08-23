@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:aaharrakshak;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 100ms
+      repositories:
+        enabled: false
+
+app:
+  security:
+    jwt-secret: test-aahar-rakshak-secret-with-enough-length-for-hmac
+    access-token-minutes: 20
+    refresh-token-days: 7
+    max-login-attempts: 5
+    lock-minutes: 15
+  intelligence:
+    hotspot-radius-km: 2.0
+    hotspot-window-hours: 24
+    hotspot-critical-threshold: 10
+    high-risk-threshold: 70
+    high-risk-sla-hours: 48
+    review-rate-limit-minutes: 60
+    sla-check-initial-delay-ms: 3600000
+    alert-retry-initial-delay-ms: 3600000

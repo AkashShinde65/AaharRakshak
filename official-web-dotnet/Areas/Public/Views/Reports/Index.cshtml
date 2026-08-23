@@ -1,0 +1,50 @@
+@model official_web_dotnet.Models.PublicSearchViewModel
+@{
+    ViewData["Title"] = "Public Reports";
+}
+
+<h1 class="h4 page-title">Public Transparency Search</h1>
+@if (ViewData["PortalError"] is string error)
+{
+    <div class="alert alert-warning">@error</div>
+}
+<div class="surface mb-3">
+    <form asp-action="Index" method="get" class="row g-2">
+        <div class="col-md-2"><input asp-for="ComplaintNumber" class="form-control" placeholder="Complaint" /></div>
+        <div class="col-md-2"><input asp-for="Company" class="form-control" placeholder="Company" /></div>
+        <div class="col-md-2"><input asp-for="Product" class="form-control" placeholder="Product" /></div>
+        <div class="col-md-2"><input asp-for="Batch" class="form-control" placeholder="Batch" /></div>
+        <div class="col-md-2"><input asp-for="Location" class="form-control" placeholder="Location" /></div>
+        <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Search</button></div>
+    </form>
+</div>
+
+<div class="surface table-responsive">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Complaint</th>
+                <th>Company</th>
+                <th>Product / Batch</th>
+                <th>Location</th>
+                <th>Outcome</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Results)
+        {
+            <tr>
+                <td>@item.TicketNumber<br /><span class="status-pill">@item.Status</span></td>
+                <td>@item.CompanyName</td>
+                <td>@item.ProductName<br /><span class="text-muted small">@item.BatchNumber</span></td>
+                <td>@item.District</td>
+                <td>@item.LatestOutcome</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Complaint" asp-route-id="@item.TicketNumber">Track</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

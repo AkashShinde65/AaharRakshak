@@ -1,0 +1,76 @@
+@model official_web_dotnet.Models.ShowCauseNoticeViewModel
+@{
+    ViewData["Title"] = "Notice " + Model.NoticeNumber;
+}
+
+<h1 class="h4 page-title">Notice @Model.NoticeNumber</h1>
+@if (TempData["PortalError"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+<div class="surface mb-3">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">Complaint</dt><dd class="col-sm-9">@Model.TicketNumber</dd>
+        <dt class="col-sm-3">Report</dt><dd class="col-sm-9">@Model.ReportNumber (@Model.Outcome)</dd>
+        <dt class="col-sm-3">Company</dt><dd class="col-sm-9">@Model.CompanyName</dd>
+        <dt class="col-sm-3">Product / Batch</dt><dd class="col-sm-9">@Model.ProductName / @Model.BatchNumber</dd>
+        <dt class="col-sm-3">Status</dt><dd class="col-sm-9"><span class="status-pill">@Model.Status</span></dd>
+        <dt class="col-sm-3">Reason</dt><dd class="col-sm-9">@Model.Reason</dd>
+        <dt class="col-sm-3">Evidence</dt><dd class="col-sm-9">@Model.EvidenceSummary</dd>
+    </dl>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="surface h-100">
+            <h2 class="h5">Company Responses</h2>
+            @if (Model.Responses.Count == 0)
+            {
+                <p class="text-muted">No response submitted.</p>
+            }
+            @foreach (var response in Model.Responses)
+            {
+                <div class="border-top pt-2 mt-2">
+                    <p>@response.ResponseText</p>
+                    <div class="small text-muted">@response.Document.OriginalFileName · @response.Document.ContentType · @response.Document.ChecksumSha256</div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="surface h-100">
+            <h2 class="h5">Decision</h2>
+            @if (Model.Action is null)
+            {
+                @if (User.IsInRole("DISTRICT_ESCALATION_OFFICER") || User.IsInRole("CENTRAL_ADMINISTRATOR"))
+                {
+                    <form asp-action="Review" asp-route-id="@Model.NoticeNumber" method="post" class="mb-2">
+                        @Html.AntiForgeryToken()
+                        <input name="Notes" class="form-control mb-2" value="Company response reviewed for simulated decision." />
+                        <button class="btn btn-outline-secondary btn-sm" type="submit">Mark Reviewed</button>
+                    </form>
+                    <a class="btn btn-primary btn-sm" asp-action="Decision" asp-route-id="@Model.NoticeNumber">Record Decision</a>
+                }
+            }
+            else
+            {
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Action</dt><dd class="col-sm-8">@Model.Action.ActionType</dd>
+                    <dt class="col-sm-4">Number</dt><dd class="col-sm-8">@Model.Action.ActionNumber</dd>
+                    <dt class="col-sm-4">Effective</dt><dd class="col-sm-8">@Model.Action.EffectiveDate</dd>
+                    <dt class="col-sm-4">Simulated</dt><dd class="col-sm-8">@Model.Action.Simulated</dd>
+                </dl>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="surface mt-3">
+    <h2 class="h5">History</h2>
+    <ul class="list-group list-group-flush">
+        @foreach (var item in Model.History)
+        {
+            <li class="list-group-item px-0">@item.CreatedAt.ToLocalTime().ToString("g") · @item.EventType · @item.Notes</li>
+        }
+    </ul>
+</div>

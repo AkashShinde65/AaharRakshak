@@ -1,0 +1,22 @@
+@model official_web_dotnet.Models.PublicLicenceStatusViewModel
+@{
+    ViewData["Title"] = "Licence Status";
+}
+
+<h1 class="h4 page-title">Licence Status</h1>
+<div class="surface mb-3">
+    <form asp-action="Licence" method="get" class="row g-2">
+        <div class="col-md-10"><input name="licenceNumber" value="@Model.LicenceNumber" class="form-control" /></div>
+        <div class="col-md-2"><button class="btn btn-primary w-100">Lookup</button></div>
+    </form>
+</div>
+<div class="surface">
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Licence</dt><dd class="col-sm-8">@Model.LicenceNumber</dd>
+        <dt class="col-sm-4">Company</dt><dd class="col-sm-8">@Model.CompanyName</dd>
+        <dt class="col-sm-4">Registry-backed status</dt><dd class="col-sm-8">@Model.RegistryBackedStatus</dd>
+        <dt class="col-sm-4">Simulated admin status</dt><dd class="col-sm-8">@Model.SimulatedAdministrativeStatus</dd>
+        <dt class="col-sm-4">Valid to</dt><dd class="col-sm-8">@Model.ValidTo</dd>
+    </dl>
+    <p class="text-muted mt-3 mb-0">@Model.SafetyNote</p>
+</div>

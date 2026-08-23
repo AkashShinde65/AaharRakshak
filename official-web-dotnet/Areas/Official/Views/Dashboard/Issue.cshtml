@@ -1,0 +1,39 @@
+@model official_web_dotnet.Models.IssueNoticeViewModel
+@{
+    ViewData["Title"] = "Issue Notice";
+}
+
+<h1 class="h4 page-title">Issue Show-Cause Notice</h1>
+<div class="surface">
+    <form asp-action="Issue" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="ReportId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="Subject" class="form-label"></label>
+            <input asp-for="Subject" class="form-control" />
+            <span asp-validation-for="Subject" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Reason" class="form-label"></label>
+            <textarea asp-for="Reason" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Reason" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="EvidenceSummary" class="form-label"></label>
+            <textarea asp-for="EvidenceSummary" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="EvidenceSummary" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ResponseDueAt" class="form-label"></label>
+            <input asp-for="ResponseDueAt" class="form-control" />
+            <span asp-validation-for="ResponseDueAt" class="text-danger"></span>
+        </div>
+        <button class="btn btn-primary" type="submit">Issue Notice</button>
+        <a class="btn btn-link" asp-action="Index">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

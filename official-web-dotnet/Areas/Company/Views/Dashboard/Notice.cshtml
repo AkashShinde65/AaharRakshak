@@ -1,0 +1,49 @@
+@model official_web_dotnet.Models.ShowCauseNoticeViewModel
+@{
+    ViewData["Title"] = "Notice " + Model.NoticeNumber;
+}
+
+<h1 class="h4 page-title">Notice @Model.NoticeNumber</h1>
+<div class="surface mb-3">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">Complaint</dt><dd class="col-sm-9">@Model.TicketNumber</dd>
+        <dt class="col-sm-3">Report</dt><dd class="col-sm-9">@Model.ReportNumber (@Model.Outcome)</dd>
+        <dt class="col-sm-3">Subject</dt><dd class="col-sm-9">@Model.Subject</dd>
+        <dt class="col-sm-3">Reason</dt><dd class="col-sm-9">@Model.Reason</dd>
+        <dt class="col-sm-3">Evidence summary</dt><dd class="col-sm-9">@Model.EvidenceSummary</dd>
+        <dt class="col-sm-3">Status</dt><dd class="col-sm-9"><span class="status-pill">@Model.Status</span></dd>
+    </dl>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="surface h-100">
+            <h2 class="h5">Responses</h2>
+            @if (Model.Responses.Count == 0)
+            {
+                <p class="text-muted">No response submitted.</p>
+                <a class="btn btn-primary" asp-action="Respond" asp-route-id="@Model.NoticeNumber">Submit Response</a>
+            }
+            @foreach (var response in Model.Responses)
+            {
+                <p>@response.ResponseText</p>
+                <div class="small text-muted">@response.Document.OriginalFileName · @response.Document.ChecksumSha256</div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="surface h-100">
+            <h2 class="h5">Decision</h2>
+            @if (Model.Action is null)
+            {
+                <p class="text-muted">No final decision recorded.</p>
+            }
+            else
+            {
+                <p><strong>@Model.Action.ActionType</strong> · @Model.Action.ActionNumber</p>
+                <p>@Model.Action.PublicSummary</p>
+                <p class="small text-muted">Simulated: @Model.Action.Simulated · Effective @Model.Action.EffectiveDate</p>
+            }
+        </div>
+    </div>
+</div>

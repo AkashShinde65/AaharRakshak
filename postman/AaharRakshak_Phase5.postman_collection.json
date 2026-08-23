@@ -1,0 +1,706 @@
+{
+  "info": {
+    "name": "AaharRakshak Phase 5 - Official Investigation And Lab Reporting",
+    "_postman_id": "a1737df6-3662-4fa6-93b1-5d537d414b57",
+    "description": "Phase 5 workflow requests for complaint priority, inspector assignment, inspection visits, sample custody, lab reporting and report publication.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "citizenToken",
+      "value": ""
+    },
+    {
+      "key": "districtToken",
+      "value": ""
+    },
+    {
+      "key": "inspectorToken",
+      "value": ""
+    },
+    {
+      "key": "labToken",
+      "value": ""
+    },
+    {
+      "key": "ticketNumber",
+      "value": "ARK-SEED-0005"
+    },
+    {
+      "key": "inspectionId",
+      "value": ""
+    },
+    {
+      "key": "sampleId",
+      "value": ""
+    },
+    {
+      "key": "reportId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Login - District Officer",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"district login succeeds\", function () { pm.response.to.have.status(200); });",
+              "pm.collectionVariables.set(\"districtToken\", pm.response.json().accessToken);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"district@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Login - Inspector",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"inspector login succeeds\", function () { pm.response.to.have.status(200); });",
+              "pm.collectionVariables.set(\"inspectorToken\", pm.response.json().accessToken);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"inspector@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Login - Lab Officer",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"lab login succeeds\", function () { pm.response.to.have.status(200); });",
+              "pm.collectionVariables.set(\"labToken\", pm.response.json().accessToken);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"identifier\": \"lab@aaharrakshak.dev\",\n  \"password\": \"password\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Priority Dashboard",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{districtToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/dashboard",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "dashboard"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Assign Inspector",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{districtToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"inspectorUserId\": 3,\n  \"district\": \"Pune\",\n  \"slaHours\": 48,\n  \"notes\": \"Assign to nearest inspector for market area visit\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/complaints/{{ticketNumber}}/assign-inspector",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "complaints",
+            "{{ticketNumber}}",
+            "assign-inspector"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Schedule Inspection",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) { pm.collectionVariables.set(\"inspectionId\", pm.response.json().inspectionId); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{inspectorToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scheduledAt\": \"2026-08-01T10:30:00Z\",\n  \"locationText\": \"Pune demo market\",\n  \"notes\": \"Visit vendor location with sealed sample kit\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/complaints/{{ticketNumber}}/inspections/schedule",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "complaints",
+            "{{ticketNumber}}",
+            "inspections",
+            "schedule"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Inspection Check-In",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{inspectorToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"latitude\": 18.52043,\n  \"longitude\": 73.85674,\n  \"locationText\": \"Pune demo market\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/inspections/{{inspectionId}}/check-in",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "inspections",
+            "{{inspectionId}}",
+            "check-in"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Inspection Visit Record",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{inspectorToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"visitedAt\": \"2026-08-01T11:00:00Z\",\n  \"notes\": \"Inspector observed storage and sealed one sample. Visual evidence is not proof of adulteration.\",\n  \"evidence\": [\n    {\n      \"type\": \"FOOD_PHOTO\",\n      \"objectKey\": \"inspection/demo/food.jpg\",\n      \"originalFileName\": \"food.jpg\",\n      \"contentType\": \"image/jpeg\",\n      \"sizeBytes\": 98304,\n      \"checksumSha256\": \"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\n      \"capturedAt\": \"2026-08-01T10:55:00Z\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/inspections/{{inspectionId}}/visit-record",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "inspections",
+            "{{inspectionId}}",
+            "visit-record"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Collect Sample",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) { pm.collectionVariables.set(\"sampleId\", pm.response.json().sampleId); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{inspectorToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sealNumber\": \"SEAL-PUNE-0001\",\n  \"quantity\": \"250 g\",\n  \"collectedAt\": \"2026-08-01T11:15:00Z\",\n  \"latitude\": 18.52043,\n  \"longitude\": 73.85674,\n  \"locationText\": \"Pune demo market\",\n  \"storageDetails\": \"Sterile container, cold-box slot A2\",\n  \"chainOfCustodyNotes\": \"Collected and sealed in citizen complaint investigation\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/inspections/{{inspectionId}}/samples",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "inspections",
+            "{{inspectionId}}",
+            "samples"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Assign Sample To Lab",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{districtToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"labOfficerUserId\": 4,\n  \"notes\": \"Assign to food chemistry bench\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/samples/{{sampleId}}/assign-lab",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "samples",
+            "{{sampleId}}",
+            "assign-lab"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Lab Assigned Samples",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{labToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/lab/investigations/samples/assigned",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lab",
+            "investigations",
+            "samples",
+            "assigned"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Lab Receive Sample",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{labToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"locationText\": \"Demo State Food Lab\",\n  \"storageCondition\": \"Cold storage rack C1, seal intact\",\n  \"notes\": \"Received with matching seal number\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/lab/investigations/samples/{{sampleId}}/received",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lab",
+            "investigations",
+            "samples",
+            "{{sampleId}}",
+            "received"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Lab Report Draft",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) { pm.collectionVariables.set(\"reportId\", pm.response.json().reportId); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{labToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reportNumber\": \"LAB-PUNE-0001\",\n  \"objectKey\": \"lab-reports/LAB-PUNE-0001.pdf\",\n  \"originalFileName\": \"LAB-PUNE-0001.pdf\",\n  \"contentType\": \"application/pdf\",\n  \"sizeBytes\": 262144,\n  \"checksumSha256\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\n  \"resultSummary\": \"Parameters within demo limits\",\n  \"results\": [\n    {\n      \"parameterName\": \"Moisture\",\n      \"testMethod\": \"Mock IS method\",\n      \"permissibleLimit\": \"< 12%\",\n      \"resultValue\": \"8.2\",\n      \"unit\": \"%\",\n      \"compliant\": true,\n      \"remarks\": \"Mock academic result\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/lab/investigations/samples/{{sampleId}}/reports/drafts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lab",
+            "investigations",
+            "samples",
+            "{{sampleId}}",
+            "reports",
+            "drafts"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Submit Lab Report",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{labToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/lab/investigations/reports/{{reportId}}/submit",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lab",
+            "investigations",
+            "reports",
+            "{{reportId}}",
+            "submit"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Review Lab Report",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{districtToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"notes\": \"Reviewed for academic demo\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/lab-reports/{{reportId}}/review",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "lab-reports",
+            "{{reportId}}",
+            "review"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Publish Lab Report",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{districtToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"notes\": \"Publish public-safe report only; no automatic licence ban\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/official/investigations/lab-reports/{{reportId}}/publish",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "official",
+            "investigations",
+            "lab-reports",
+            "{{reportId}}",
+            "publish"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+@model official_web_dotnet.Models.PublicComplaintStatusViewModel
+@{
+    ViewData["Title"] = "Complaint " + Model.TicketNumber;
+}
+
+<h1 class="h4 page-title">Complaint @Model.TicketNumber</h1>
+<div class="surface mb-3">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">Status</dt><dd class="col-sm-9"><span class="status-pill">@Model.Status</span></dd>
+        <dt class="col-sm-3">Category</dt><dd class="col-sm-9">@Model.Category</dd>
+        <dt class="col-sm-3">Company</dt><dd class="col-sm-9">@Model.CompanyName</dd>
+        <dt class="col-sm-3">Product / Batch</dt><dd class="col-sm-9">@Model.ProductName / @Model.BatchNumber</dd>
+        <dt class="col-sm-3">District</dt><dd class="col-sm-9">@Model.District</dd>
+    </dl>
+</div>
+<div class="surface">
+    <h2 class="h5">Published Reports</h2>
+    @foreach (var report in Model.PublishedReports)
+    {
+        <a class="btn btn-outline-primary btn-sm" asp-action="Report" asp-route-id="@report.ReportNumber">@report.ReportNumber</a>
+    }
+</div>
